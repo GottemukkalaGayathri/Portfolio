@@ -4,11 +4,16 @@ import helmet from 'helmet'
 import mongoose from 'mongoose'
 import contactRoutes from './routes/contactRoutes.js'
 
+const normalizeOrigin = (origin) => origin.trim().replace(/\/+$/, '')
+
 const app = express()
+app.set('trust proxy', 1)
+
 const origins = [...new Set([
   'http://localhost:5173',
-  'https://portfolio-63u8.onrender.com/',
-  ...(process.env.CLIENT_ORIGIN || '').split(',').map((origin) => origin.trim()).filter(Boolean),
+  'https://portfolio-63u8.onrender.com',
+  'https://portfoliogaye.vercel.app',
+  ...(process.env.CLIENT_ORIGIN || '').split(',').map(normalizeOrigin).filter(Boolean),
 ])]
 
 app.disable('x-powered-by')
