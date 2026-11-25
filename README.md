@@ -80,7 +80,7 @@ The frontend runs at `http://localhost:5173` and API at `http://localhost:5000`.
 
 Import the repository, set the project root to `frontend`, and add:
 
-- `VITE_API_URL`: deployed Render API URL plus `/api` (for example, `https://your-api.onrender.com/api`)
+- `VITE_API_URL`: deployed Render API URL plus `/api` (for example, `https://portfolio-backend-unj2.onrender.com/api`; this is also the frontend fallback)
 - `VITE_LINKEDIN_URL`: optional LinkedIn profile URL
 - `VITE_RESUME_URL`: optional override for the bundled resume at `/resume.pdf`
 
@@ -88,7 +88,7 @@ Vite builds with `npm run build` and outputs `frontend/dist`.
 
 ### Render backend
 
-Create a Node web service with root directory `backend`, build command `npm install`, and start command `npm start`. Configure `MONGODB_URI`, `CLIENT_ORIGIN` (the deployed Vercel origin), and `PORT` if the service requires it. Add `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, and `NOTIFICATION_EMAIL` only when email alerts are configured. Set `CLIENT_ORIGIN` to the exact production frontend origin (comma-separated origins are supported).
+Create a Node web service with root directory `backend`, build command `npm install`, and start command `npm start`. Configure `MONGODB_URI`, `CLIENT_ORIGIN` (additional deployed Vercel origin or comma-separated origins), and `PORT` if the service requires it. `https://portfoliogaye.vercel.app` and local development are allowed by default. Add `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, and `NOTIFICATION_EMAIL` only when email alerts are configured.
 
 ## Deployment configuration
 

@@ -5,7 +5,11 @@ import mongoose from 'mongoose'
 import contactRoutes from './routes/contactRoutes.js'
 
 const app = express()
-const origins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173').split(',').map((origin) => origin.trim())
+const origins = [...new Set([
+  'http://localhost:5173',
+  'https://portfolio-63u8.onrender.com/',
+  ...(process.env.CLIENT_ORIGIN || '').split(',').map((origin) => origin.trim()).filter(Boolean),
+])]
 
 app.disable('x-powered-by')
 app.use(helmet())

@@ -11,7 +11,7 @@ export default function ContactForm() {
     event.preventDefault()
     setState({ loading: true, type: '', message: '' })
     try {
-      const base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+      const base = (import.meta.env.VITE_API_URL || 'https://portfolio-backend-unj2.onrender.com/api').replace(/\/+$/, '')
       const response = await fetch(`${base}/contact`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       const data = await response.json()
       if (!response.ok) throw new Error(data.message || 'Could not send your message. Please try again.')
