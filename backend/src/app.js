@@ -12,6 +12,14 @@ const origins = [...new Set([
 ])]
 
 app.disable('x-powered-by')
+
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Gayathri Portfolio API is running!'
+  })
+})
+
 app.use(helmet())
 app.use(cors({ origin: (origin, callback) => {
   if (!origin || origins.includes('*') || origins.includes(origin)) return callback(null, true)
