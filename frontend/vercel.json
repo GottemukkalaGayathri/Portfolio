@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/projects", "destination": "/index.html" },
+    { "source": "/certificates", "destination": "/index.html" },
+    { "source": "/certifications", "destination": "/index.html" }
+  ]
+}
