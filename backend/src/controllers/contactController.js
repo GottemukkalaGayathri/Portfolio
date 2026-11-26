@@ -1,5 +1,5 @@
 import ContactMessage from '../models/ContactMessage.js'
-import { notifyPortfolioOwner } from '../utils/email.js'
+import { getEmailProvider, notifyPortfolioOwner } from '../utils/email.js'
 import mongoose from 'mongoose'
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -29,7 +29,7 @@ export async function createContactMessage(req, res, next) {
       }
       return res.status(201).json({ message: 'Thanks for reaching out. Your message has been sent.', emailSent: true })
     } catch (error) {
-      console.error('Contact email notification failed:', error.message)
+      console.error(`Contact email notification failed (${getEmailProvider()}):`, error.message)
       return res.status(201).json({
         message: 'Your message was saved, but the email notification could not be sent. Please email me directly for now.',
         emailSent: false,

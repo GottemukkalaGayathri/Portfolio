@@ -1,26 +1,34 @@
 import nodemailer from 'nodemailer'
 
+const env = (key) => (process.env[key] || '').trim()
+
 function resendIsConfigured() {
-  return Boolean(process.env.RESEND_API_KEY && process.env.NOTIFICATION_EMAIL)
+  return Boolean(env('RESEND_API_KEY') && env('NOTIFICATION_EMAIL'))
 }
 
 function smtpIsConfigured() {
-  return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.NOTIFICATION_EMAIL)
+  return Boolean(env('SMTP_HOST') && env('SMTP_USER') && env('SMTP_PASS') && env('NOTIFICATION_EMAIL'))
+}
+
+export function getEmailProvider() {
+  if (resendIsConfigured()) return 'resend'
+  if (smtpIsConfigured()) return 'smtp'
+  return 'none'
 }
 
 export function emailIsConfigured() {
-  return resendIsConfigured() || smtpIsConfigured()
+  return getEmailProvider() !== 'none'
 }
 
 async function sendViaResend(mail) {
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      Authorization: `Bearer ${env('RESEND_API_KEY')}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: process.env.RESEND_FROM || 'Portfolio Contact <onboarding@resend.dev>',
+      from: env('RESEND_FROM') || 'Portfolio Contact <onboarding@resend.dev>',
       to: [mail.to],
       reply_to: mail.replyTo,
       subject: mail.subject,
@@ -36,17 +44,18 @@ async function sendViaResend(mail) {
 
 async function sendViaSmtp(mail) {
   const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: process.env.SMTP_SECURE === 'true',
+    host: env('SMTP_HOST'),
+    port: Number(env('SMTP_PORT') || 587),
+    secure: env('SMTP_SECURE') === 'true',
+    family: 4,
     connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 15000,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    auth: { user: env('SMTP_USER'), pass: env('SMTP_PASS') },
   })
 
   await transporter.sendMail({
-    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    from: env('SMTP_FROM') || env('SMTP_USER'),
     to: mail.to,
     replyTo: mail.replyTo,
     subject: mail.subject,
@@ -55,20 +64,21 @@ async function sendViaSmtp(mail) {
 }
 
 export async function notifyPortfolioOwner(message) {
-  if (!emailIsConfigured()) return { sent: false, reason: 'not_configured' }
+  const provider = getEmailProvider()
+  if (provider === 'none') return { sent: false, reason: 'not_configured' }
 
   const mail = {
-    to: process.env.NOTIFICATION_EMAIL,
+    to: env('NOTIFICATION_EMAIL'),
     replyTo: message.email,
     subject: `Portfolio contact: ${message.subject}`,
     text: `Name: ${message.name}\nEmail: ${message.email}\nSubject: ${message.subject}\n\n${message.message}`,
   }
 
-  if (resendIsConfigured()) {
+  if (provider === 'resend') {
     await sendViaResend(mail)
-    return { sent: true, provider: 'resend' }
+    return { sent: true, provider }
   }
 
   await sendViaSmtp(mail)
-  return { sent: true, provider: 'smtp' }
+  return { sent: true, provider }
 }

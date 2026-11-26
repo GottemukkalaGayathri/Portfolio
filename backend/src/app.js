@@ -3,6 +3,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import mongoose from 'mongoose'
 import contactRoutes from './routes/contactRoutes.js'
+import { getEmailProvider } from './utils/email.js'
 
 const normalizeOrigin = (origin) => origin.trim().replace(/\/+$/, '')
 
@@ -31,7 +32,7 @@ app.use(cors({ origin: (origin, callback) => {
 } }))
 app.use(express.json({ limit: '20kb' }))
 
-app.get('/api/health', (_req, res) => res.json({ status: 'ok', database: mongoose.connection.readyState === 1 ? 'connected' : 'unavailable' }))
+app.get('/api/health', (_req, res) => res.json({ status: 'ok', database: mongoose.connection.readyState === 1 ? 'connected' : 'unavailable', emailProvider: getEmailProvider() }))
 app.use('/api/contact', contactRoutes)
 app.use((_req, res) => res.status(404).json({ message: 'The requested endpoint was not found.' }))
 app.use((error, _req, res, _next) => {
