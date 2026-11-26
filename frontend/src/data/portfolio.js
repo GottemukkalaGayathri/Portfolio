@@ -1,3 +1,9 @@
+const normalizeExternalUrl = (value) => {
+  const trimmed = (value || '').trim()
+  if (!trimmed) return ''
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+}
+
 export const profile = {
   name: 'Gayathri Gottemukkala',
   role: 'Full Stack Developer',
@@ -5,7 +11,7 @@ export const profile = {
   phone: '8309601886',
   github: 'https://github.com/GayathriGottemukkala',
   portfolio: 'https://portfoliogaye.vercel.app/',
-  linkedin: import.meta.env.VITE_LINKEDIN_URL || '',
+  linkedin: normalizeExternalUrl(import.meta.env.VITE_LINKEDIN_URL),
   resume: import.meta.env.VITE_RESUME_URL || '/resume.pdf',
   customResume: import.meta.env.VITE_CUSTOM_RESUME_URL || '',
   summary: 'Full Stack Developer with 1+ year of experience building responsive web applications using React.js, Node.js, Express.js, and MongoDB. Experienced in developing ATS and CRM platforms, REST APIs, authentication systems, role-based access control, dashboards, and database-driven applications. Familiar with deployment using AWS EC2, Nginx, PM2, Hostinger, Render, and Vercel.',
