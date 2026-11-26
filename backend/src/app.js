@@ -12,7 +12,6 @@ app.set('trust proxy', 1)
 const origins = [...new Set([
   'http://localhost:5173',
   'https://portfolio-63u8.onrender.com',
-  'https://portfoliogaye.vercel.app',
   ...(process.env.CLIENT_ORIGIN || '').split(',').map(normalizeOrigin).filter(Boolean),
 ])]
 
